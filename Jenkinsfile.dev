@@ -34,13 +34,15 @@ pipeline {
             steps {
                 echo 'Iniciando la etapa de Creacion de Bucket en GCP...'
                 sh "gcloud config set project ${PROJECT_ID}"
-                // Verificar si el bucket ya existe antes de crearlo
-                def bucketExists = sh(script: "gsutil ls gs://${NAME_BUCKET_GCP}", returnStatus: true)
-                if (bucketExists != 0) {
-                    sh "gsutil mb -p ${PROJECT_ID} -l ${GCP_LOCATION} gs://${NAME_BUCKET_GCP}"
-                    echo 'Bucket en GCP creado correctamente.'
-                } else {
-                    echo "El bucket gs://${NAME_BUCKET_GCP} ya existe. No se creará otro."
+                script {
+                    // Verificar si el bucket ya existe antes de crearlo
+                    def bucketExists = sh(script: "gsutil ls gs://${NAME_BUCKET_GCP}", returnStatus: true)
+                    if (bucketExists != 0) {
+                        sh "gsutil mb -p ${PROJECT_ID} -l ${GCP_LOCATION} gs://${NAME_BUCKET_GCP}"
+                        echo 'Bucket en GCP creado correctamente.'
+                    } else {
+                        echo "El bucket gs://${NAME_BUCKET_GCP} ya existe. No se creará otro."
+                    }
                 }
             }
         }
